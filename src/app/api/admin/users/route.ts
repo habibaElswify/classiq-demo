@@ -4,7 +4,7 @@ import { requireAuth } from '@/lib/middleware';
 import { hashPassword } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
-  const authResult = requireAuth(req, 'admin');
+  const authResult = await requireAuth(req, 'admin');
   if (authResult instanceof NextResponse) return authResult;
 
   const db = getDb();
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const authResult = requireAuth(req, 'admin');
+  const authResult = await requireAuth(req, 'admin');
   if (authResult instanceof NextResponse) return authResult;
 
   const body = await req.json();
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const authResult = requireAuth(req, 'admin');
+  const authResult = await requireAuth(req, 'admin');
   if (authResult instanceof NextResponse) return authResult;
 
   const body = await req.json();

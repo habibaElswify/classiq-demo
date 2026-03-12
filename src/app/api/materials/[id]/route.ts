@@ -6,7 +6,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authResult = requireAuth(req, 'teacher', 'admin');
+  const authResult = await requireAuth(req, 'teacher', 'admin');
   if (authResult instanceof NextResponse) return authResult;
 
   const { id } = await params;

@@ -52,7 +52,7 @@ export async function chat(
   });
 
   const aiText = response.content[0].type === 'text' ? response.content[0].text : '';
-  const sourceMatches = aiText.match(/\u{1f4ce} Source: \[([^\]]+)\]/g) || [];
+  const sourceMatches = aiText.match(/\u{1f4ce} Source: \[([^\]]+)\]/gu) || [];
   const sources = sourceMatches.map(s => s.replace('\u{1f4ce} Source: [', '').replace(']', ''));
 
   db.prepare('INSERT INTO analytics (course_id, user_id, action, metadata) VALUES (?, ?, ?, ?)').run(courseId, userId, 'chat_message', JSON.stringify({ blocked: false }));

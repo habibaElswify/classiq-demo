@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAuth } from '@/lib/middleware';
-import pdfParse from 'pdf-parse';
+import { PDFParse } from 'pdf-parse';
+
+async function extractPdfText(buffer: Buffer): Promise<string> {
+  const parser = new PDFParse({ data: new Uint8Array(buffer) });
+  try {
+    const result = await parser.getText();
+    return result.text;
+  } finally {
+    await parser.destroy();
+  }
+}
 
 export async function GET(req: NextRequest) {
-  const authResult = requireAuth(req);
+  const authResult = await requireAuth(req);
   if (authResult instanceof NextResponse) return authResult;
 
   const courseId = req.nextUrl.searchParams.get('courseId');
@@ -29,7 +39,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const authResult = requireAuth(req, 'teacher', 'admin');
+  const authResult = await requireAuth(req, 'teacher', 'admin');
   if (authResult instanceof NextResponse) return authResult;
   const user = authResult;
 
@@ -51,8 +61,7 @@ export async function POST(req: NextRequest) {
 
   try {
     if (filename.toLowerCase().endsWith('.pdf')) {
-      const parsed = await pdfParse(buffer);
-      contentText = parsed.text;
+      contentText = await extractPdfText(buffer);
       status = 'trained';
     } else if (
       filename.toLowerCase().endsWith('.txt') ||

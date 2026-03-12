@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { requireAuth } from '@/lib/middleware';
 
 export async function GET(req: NextRequest) {
-  const authResult = requireAuth(req);
+  const authResult = await requireAuth(req);
   if (authResult instanceof NextResponse) return authResult;
 
   const { searchParams } = new URL(req.url);
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const authResult = requireAuth(req, 'teacher', 'admin');
+  const authResult = await requireAuth(req, 'teacher', 'admin');
   if (authResult instanceof NextResponse) return authResult;
 
   const body = await req.json();

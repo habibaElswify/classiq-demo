@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { requireAuth } from '@/lib/middleware';
 
 export async function GET(req: NextRequest) {
-  const authResult = requireAuth(req, 'teacher', 'admin');
+  const authResult = await requireAuth(req, 'teacher', 'admin');
   if (authResult instanceof NextResponse) return authResult;
 
   const { searchParams } = new URL(req.url);
