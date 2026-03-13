@@ -487,7 +487,7 @@
           '<div style="font-size:10px;color:#9CA3AF;text-align:center;margin-bottom:4px">QUICK DEMO LOGIN</div>',
           '<div style="display:flex;gap:6px">',
             '<button class="classiq-demo-btn" data-email="habiba@bellevuecollege.edu" style="flex:1;padding:6px;border:1px solid #DDD6FE;border-radius:6px;font-size:11px;cursor:pointer;background:white;color:#5D3FD3;font-weight:500">Student</button>',
-            '<button class="classiq-demo-btn" data-email="prof.johnson@bellevuecollege.edu" style="flex:1;padding:6px;border:1px solid #DDD6FE;border-radius:6px;font-size:11px;cursor:pointer;background:white;color:#5D3FD3;font-weight:500">Teacher</button>',
+            '<button class="classiq-demo-btn" data-email="morteza.chini@canvas.auto" style="flex:1;padding:6px;border:1px solid #DDD6FE;border-radius:6px;font-size:11px;cursor:pointer;background:white;color:#5D3FD3;font-weight:500">Teacher</button>',
           '</div>',
         '</div>',
       '</div>',

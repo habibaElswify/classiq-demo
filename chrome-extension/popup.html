@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #fff;
+    }
+    .header {
+      background: linear-gradient(135deg, #5D3FD3 0%, #7B5FE0 100%);
+      padding: 20px;
+      color: white;
+      text-align: center;
+    }
+    .header-icon { font-size: 36px; margin-bottom: 6px; }
+    .header-title { font-size: 18px; font-weight: 700; }
+    .header-sub { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+    .content { padding: 16px; }
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #F8F7FF;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.online { background: #22C55E; }
+    .status-dot.offline { background: #EF4444; }
+    .status-text { font-size: 13px; color: #374151; font-weight: 500; }
+    .status-detail { font-size: 11px; color: #6B7280; }
+    .info-card {
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .info-card h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6B7280;
+      margin-bottom: 8px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 12px;
+    }
+    .info-label { color: #6B7280; }
+    .info-value { color: #1F2937; font-weight: 500; }
+    .login-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #DDD6FE;
+      border-radius: 8px;
+      font-size: 12px;
+      outline: none;
+      margin-bottom: 8px;
+    }
+    .login-input:focus { border-color: #5D3FD3; }
+    .login-btn {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, #5D3FD3, #7B5FE0);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .login-btn:hover { opacity: 0.9; }
+    .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .logout-btn {
+      width: 100%;
+      padding: 8px;
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1px solid #FECACA;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .error { font-size: 11px; color: #EF4444; margin-bottom: 8px; min-height: 14px; }
+    .demo-btns { display: flex; gap: 6px; margin-top: 8px; }
+    .demo-btn {
+      flex: 1;
+      padding: 6px;
+      border: 1px solid #DDD6FE;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      background: white;
+      color: #5D3FD3;
+      font-weight: 500;
+    }
+    .demo-btn:hover { background: #F8F7FF; }
+    .hint { font-size: 10px; color: #9CA3AF; text-align: center; margin-top: 6px; }
+    .footer {
+      padding: 12px 16px;
+      border-top: 1px solid #F3F4F6;
+      text-align: center;
+      font-size: 11px;
+      color: #9CA3AF;
+    }
+    .hidden { display: none !important; }
+    .user-info {
+      padding: 12px;
+      background: #F8F7FF;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .user-name { font-size: 14px; font-weight: 600; color: #1F2937; }
+    .user-email { font-size: 11px; color: #6B7280; margin-top: 2px; }
+    .user-role {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 8px;
+      background: #EDE9FE;
+      color: #5D3FD3;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-icon">&#129302;</div>
+    <div class="header-title">ClassIQ</div>
+    <div class="header-sub">AI Course Assistant for Canvas</div>
+  </div>
+
+  <div class="content">
+    <div class="status-row">
+      <span class="status-dot" id="statusDot"></span>
+      <div>
+        <div class="status-text" id="statusText">Checking...</div>
+        <div class="status-detail" id="statusDetail"></div>
+      </div>
+    </div>
+
+    <!-- Login View -->
+    <div id="loginView">
+      <div class="info-card">
+        <h3>Sign In</h3>
+        <input class="login-input" id="emailInput" type="email" placeholder="Email">
+        <input class="login-input" id="passwordInput" type="password" placeholder="Password">
+        <div class="error" id="loginError"></div>
+        <button class="login-btn" id="loginBtn">Sign In</button>
+        <div class="demo-btns">
+          <button class="demo-btn" data-email="habiba@bellevuecollege.edu">Student</button>
+          <button class="demo-btn" data-email="morteza.chini@canvas.auto">Teacher</button>
+        </div>
+        <div class="hint">Demo accounts use password: password123</div>
+      </div>
+    </div>
+
+    <!-- Logged In View -->
+    <div id="loggedInView" class="hidden">
+      <div class="user-info">
+        <div class="user-name" id="userName"></div>
+        <div class="user-email" id="userEmail"></div>
+        <span class="user-role" id="userRole"></span>
+      </div>
+
+      <div class="info-card">
+        <h3>How to Use</h3>
+        <div style="font-size:12px;color:#374151;line-height:1.5">
+          1. Go to any <strong>Canvas</strong> course page<br>
+          2. Click the purple <strong>&#129302;</strong> button<br>
+          3. Your teacher's AI rules are applied automatically<br>
+          4. Ask questions about course materials!
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h3>Features</h3>
+        <div class="info-row">
+          <span class="info-label">Teacher Rules</span>
+          <span class="info-value" style="color:#22C55E">Active</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Course Materials</span>
+          <span class="info-value" style="color:#22C55E">Connected</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Study Modes</span>
+          <span class="info-value">Teacher-set</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Chat History</span>
+          <span class="info-value">Synced</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Page Scraping</span>
+          <span class="info-value" style="color:#22C55E">Auto</span>
+        </div>
+      </div>
+
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    ClassIQ v3.0 &mdash; Built for CSS 370
+  </div>
+
+  <script>
+    const dot = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+    const detail = document.getElementById('statusDetail');
+    const loginView = document.getElementById('loginView');
+    const loggedInView = document.getElementById('loggedInView');
+
+    // Check auth state
+    chrome.storage.local.get(['classiq_token', 'classiq_user'], function(data) {
+      if (data.classiq_token && data.classiq_user) {
+        showLoggedIn(data.classiq_user);
+      } else {
+        showLogin();
+      }
+    });
+
+    function showLogin() {
+      loginView.classList.remove('hidden');
+      loggedInView.classList.add('hidden');
+      dot.className = 'status-dot offline';
+      text.textContent = 'Not Signed In';
+      detail.textContent = 'Sign in to connect to your courses';
+    }
+
+    function showLoggedIn(user) {
+      loginView.classList.add('hidden');
+      loggedInView.classList.remove('hidden');
+      dot.className = 'status-dot online';
+      text.textContent = 'Connected';
+      detail.textContent = 'Signed in as ' + user.name;
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userRole').textContent = user.role;
+    }
+
+    // Login
+    document.getElementById('loginBtn').addEventListener('click', async function() {
+      const email = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value;
+      const errEl = document.getElementById('loginError');
+      if (!email || !password) { errEl.textContent = 'Email and password required'; return; }
+      errEl.textContent = '';
+      this.textContent = 'Signing in...';
+      this.disabled = true;
+
+      try {
+        const res = await fetch('https://classiq-demo.vercel.app/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.error || 'Login failed';
+          this.textContent = 'Sign In';
+          this.disabled = false;
+          return;
+        }
+        chrome.storage.local.set({ classiq_token: data.token, classiq_user: data.user }, function() {
+          showLoggedIn(data.user);
+        });
+      } catch(err) {
+        errEl.textContent = 'Network error';
+        this.textContent = 'Sign In';
+        this.disabled = false;
+      }
+    });
+
+    // Demo buttons
+    document.querySelectorAll('.demo-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.getElementById('emailInput').value = this.dataset.email;
+        document.getElementById('passwordInput').value = 'password123';
+        document.getElementById('loginBtn').click();
+      });
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      chrome.storage.local.remove(['classiq_token', 'classiq_user'], function() {
+        showLogin();
+      });
+    });
+  </script>
+</body>
+</html>
