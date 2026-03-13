@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAuth } from '@/lib/middleware';
-import { PDFParse } from 'pdf-parse';
 
 async function extractPdfText(buffer: Buffer): Promise<string> {
+  const { PDFParse } = await import('pdf-parse');
   const parser = new PDFParse({ data: new Uint8Array(buffer) });
   try {
     const result = await parser.getText();
@@ -26,16 +26,15 @@ export async function GET(req: NextRequest) {
   }
 
   const db = getDb();
-  const materials = db
-    .prepare(
-      `SELECT id, course_id, filename, status, uploaded_at
-       FROM materials
-       WHERE course_id = ?
-       ORDER BY uploaded_at DESC`
-    )
-    .all(Number(courseId));
+  const result = await db.execute({
+    sql: `SELECT id, course_id, filename, status, uploaded_at
+     FROM materials
+     WHERE course_id = ?
+     ORDER BY uploaded_at DESC`,
+    args: [Number(courseId)],
+  });
 
-  return NextResponse.json(materials);
+  return NextResponse.json(result.rows);
 }
 
 export async function POST(req: NextRequest) {
@@ -79,37 +78,23 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
+  const cid = Number(courseId);
 
-  const insertMaterial = db.prepare(
-    `INSERT INTO materials (course_id, filename, content_text, status)
-     VALUES (?, ?, ?, ?)`
-  );
-  const insertAnalytics = db.prepare(
-    `INSERT INTO analytics (course_id, user_id, action, metadata)
-     VALUES (?, ?, ?, ?)`
-  );
+  const materialResult = await db.execute({
+    sql: `INSERT INTO materials (course_id, filename, content_text, status)
+     VALUES (?, ?, ?, ?)`,
+    args: [cid, filename, contentText, status],
+  });
+  const materialId = Number(materialResult.lastInsertRowid);
 
-  const result = db.transaction(() => {
-    const info = insertMaterial.run(
-      Number(courseId),
-      filename,
-      contentText,
-      status
-    );
-    const materialId = info.lastInsertRowid as number;
-
-    insertAnalytics.run(
-      Number(courseId),
-      user.id,
-      'material_upload',
-      JSON.stringify({ materialId, filename, status })
-    );
-
-    return materialId;
-  })();
+  await db.execute({
+    sql: `INSERT INTO analytics (course_id, user_id, action, metadata)
+     VALUES (?, ?, ?, ?)`,
+    args: [cid, user.id, 'material_upload', JSON.stringify({ materialId, filename, status })],
+  });
 
   return NextResponse.json(
-    { id: result, filename, status },
+    { id: materialId, filename, status },
     { status: 201 }
   );
 }
