@@ -4,7 +4,7 @@ import { getCourseRules, isTopicBlocked, getSystemPrompt } from './rules-engine'
 
 const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const MAX_TOTAL_MATERIALS_CHARS = 60000; // ~15K tokens total for materials context
+const MAX_TOTAL_MATERIALS_CHARS = 30000; // ~8K tokens — fits within Groq free tier 12K TPM limit
 
 async function getCourseMaterials(courseId: number): Promise<string> {
   const db = getDb();
