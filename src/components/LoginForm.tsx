@@ -45,9 +45,40 @@ export default function LoginForm() {
     }
   };
 
-  const quickLogin = (demoEmail: string) => {
+  const quickLogin = async (demoEmail: string) => {
     setEmail(demoEmail);
     setPassword('password123');
+    setError('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: demoEmail, password: 'password123' }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Login failed');
+        setLoading(false);
+        return;
+      }
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      const role = data.user.role;
+      if (role === 'student') router.push('/student');
+      else if (role === 'teacher') router.push('/teacher');
+      else if (role === 'admin') router.push('/admin');
+      else router.push('/');
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -116,21 +147,21 @@ export default function LoginForm() {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => quickLogin('student@demo.edu')}
+              onClick={() => quickLogin('habiba@bellevuecollege.edu')}
               className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#5D3FD3] hover:text-[#5D3FD3]"
             >
               👩‍🎓 Student
             </button>
             <button
               type="button"
-              onClick={() => quickLogin('teacher@demo.edu')}
+              onClick={() => quickLogin('morteza.chini@canvas.auto')}
               className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#5D3FD3] hover:text-[#5D3FD3]"
             >
               👨‍🏫 Teacher
             </button>
             <button
               type="button"
-              onClick={() => quickLogin('admin@demo.edu')}
+              onClick={() => quickLogin('admin@bellevuecollege.edu')}
               className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#5D3FD3] hover:text-[#5D3FD3]"
             >
               🔧 Admin
