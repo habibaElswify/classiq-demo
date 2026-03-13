@@ -44,6 +44,25 @@ export async function chat(
   const rules = await getCourseRules(courseId);
   if (!rules) throw new Error('Course rules not found');
 
+  // Security pre-check: block obvious prompt injection / system probing
+  const lowerMsg = message.toLowerCase();
+  const securityPatterns = [
+    'api key', 'api_key', 'apikey', 'secret key', 'access token',
+    'system prompt', 'your instructions', 'your prompt', 'your rules',
+    'ignore your', 'ignore previous', 'ignore all', 'disregard your',
+    'reveal your', 'expose your', 'show me your', 'print your',
+    'what are your instructions', 'what is your prompt',
+    'environment variable', 'env var', 'database password', 'db password',
+    'groq_api', 'jwt_secret', 'turso_auth', 'openai_api',
+  ];
+  if (securityPatterns.some(p => lowerMsg.includes(p))) {
+    return {
+      response: "I'm here to help you learn about your course material. I can't share information about my internal configuration, API keys, or system details. What course topic can I help you with?",
+      blocked: true,
+      sources: [],
+    };
+  }
+
   if (rules.exam_mode) {
     return { response: '\u26a0\ufe0f ClassIQ is temporarily disabled for this course during the exam period. Please check back later.', blocked: true, sources: [] };
   }
